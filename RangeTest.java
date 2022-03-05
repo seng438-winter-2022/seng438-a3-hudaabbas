@@ -532,4 +532,142 @@ public class RangeTest {
         Range arg = new Range(-10, 10);
         assertTrue("Testing the intersects functions argument Range within the class object Range", stub.intersects(arg));
     }
+    
+    
+    //======================================
+    // Tests for hashCode(): int
+    //======================================
+    
+  //This test covers the valid class partition for the hashCode method
+    @Test
+    public void test_hashCode_valid() {
+    	Range stub = new Range(10, 11);
+    	int expected = -2076573696;
+        assertEquals("Testing the hashcode functions Range within the class object Range", expected, stub.hashCode());
+    }
+    
+    //This test covers the invalid class/partition for the Range class where lower is great than upper
+    @Test(expected = IllegalArgumentException.class)
+    public void test_hashCode_invalid() {
+    	Range stub = new Range(10, 0);
+    }
+    
+    // ============================================================ //
+    // Tests for equals(Object obj)
+    // ============================================================ //
+    
+    
+    // Test for equals for branch if(not range object)
+    // This test uses a non Range object to test the method equals(Object obj)
+    @Test
+    public void test_equals_notRangeObj()
+    {
+        String str = new String("This is a Test");
+        boolean actual = newValidRange.equals(str);
+        boolean expected = false;
+        assertEquals("Testing equals with non Range object", expected, actual);
+    }
+    
+    
+    // Test for equals for an input of an equal Range object
+    // This test uses an equal Range object to test the method equals(Object obj)
+    @Test
+    public void test_equals_equalRange()
+    {
+            Range obj = new Range(-5, 5);
+            boolean actual = newValidRange.equals(obj);
+            boolean expected = true;
+            assertEquals("Testing equals with equal Range object", expected, actual);
+    }
+        
+    // Test for equals for branch when the lower value does not match
+    // This test uses a unequal Range object to test the method equals(Object obj)
+    @Test 
+    public void test_equals_lowerBranch()
+    {
+        Range obj = new Range(-1, 5);
+        boolean actual = newValidRange.equals(obj);
+        boolean expected = false;
+        assertEquals("Testing equals with not equal lower value", expected, actual);
+    }
+      
+    // Test for equals for branch when the upper value does not match
+    // This test uses a unequal Range object to test the method equals(Object obj)
+    @Test
+    public void test_equals_upperBranch()
+    {
+        Range obj = new Range(-5, 30);
+        boolean actual = newValidRange.equals(obj);
+        boolean expected = false;
+        assertEquals("Testing equals with not equal upper value", expected, actual);
+    }
+    
+    // ============================================================ //
+    // expand(Range range,double lowerMargin, double upperMargin)
+    // ============================================================ //
+
+    //Test for expand, testing null input for Range input
+    @Test (expected = IllegalArgumentException.class)
+   public void test_expand_null() {
+       Range actual = Range.expand(testRange, 10, 10);
+   }
+
+    //Test for expand, testing non null parameters
+    @Test
+    public void test_validData_expand() {
+        Range big_lower_margin= new Range(5,10);
+        Range actual = Range.expand(big_lower_margin, 0.5, 5);
+        Range expected= new Range(2.5,35);
+        assertEquals("Testing expandToInclude with valid Data with value greater than range upper bound, to cover more branches", expected, actual);
+
+    }
+
+    //Test for expand, testing non null parameters where
+    //lower is greater than upper
+    @Test
+    public void test_validData_expand_LowerGreaterThanUpper() {
+        Range big_lower_margin= new Range(9,10);
+        Range actual = Range.expand(big_lower_margin, 0.5, -5);
+        Range expected= new Range(6.75,6.75);
+        assertEquals("Test for expand, testing non null parameters where lower is greater than upper", expected, actual);
+    }
+    
+    //================================================================
+    // Tests for combineIgnoringNaN(Range range1, Range range2): Range
+    //================================================================
+
+    //Testing the combineIgnoringNaN with both values equaling to null for the first range object and the second range object
+    @Test
+    public void test_combineIgnoringNaN_both_ranges_null_value()
+    {
+        Range object1 = null; 
+        Range object2 = null; 
+        Range actual = Range.combineIgnoringNaN(object1, object2);
+        Range expected = null;
+        assertEquals("Testing the null value for both ranges", expected, actual);
+    }
+    //Testing the combineIgnoringNaN with first Range value being null and second range object is isNaN
+    @Test
+    public void test_combineIgnoringNaN_range1_null_only()
+    {
+        Range actual = Range.combineIgnoringNaN(null, new Range(Double.NaN, Double.NaN));
+        Range expected = null; 
+        assertEquals("Testing the null value for the first range and nan_number for the second", expected, actual);
+    }
+    //Testing the comineIgnoringNaN with first object value isNaN and second object value being null
+    @Test
+    public void test_combineIgnoringNaN_range2_null_only()
+    {
+        Range actual = Range.combineIgnoringNaN(new Range(Double.NaN, Double.NaN), null);
+        Range expected = null; 
+        assertEquals("Testing the null value for the first range and null for the second", expected, actual);
+    }
+    //Testing the combineIgnoringNaN with both values being valid
+    @Test
+    public void test_combineIgnoringNaN_valid_values()
+    {
+        Range actual = Range.combineIgnoringNaN(new Range(2,3), new Range(4,5));
+        Range expected = new Range(2,5);
+        assertEquals("Testing both objects with valid values", expected, actual);
+    }
 }
